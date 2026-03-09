@@ -77,7 +77,7 @@ def parse_args_and_config():
         "--scale_ls", type=float, default=1.0, help="scale_for_gLS"
     )
     parser.add_argument(
-        "--inject_noise", type=int, default=1, help="inject_noise --- separates between DDPG and IDPG"
+        "--inject_noise", type=int, default=1
     )
     parser.add_argument(
         "--gamma", type=float, default=8.0, help="gamma parameterizes traversing from BP to LS, bigger means more dominance to BP"

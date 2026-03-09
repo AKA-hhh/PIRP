@@ -10,7 +10,7 @@ import torch.utils.data as data
 
 from datasets import get_dataset, data_transform, inverse_data_transform
 from functions.ckpt_util import get_ckpt_path, download
-from functions.ddpg_scheme import ddpg_diffusion
+from functions.pirp_scheme import pirp_diffusion
 
 import torchvision.utils as tvu
 
@@ -199,22 +199,22 @@ class Diffusion(object):
                 cls_fn = cond_fn
 
         if self.args.inject_noise==1:
-            print('Run DDPG.',
+            print(
                 f'Operators implementation via {self.args.operator_imp}.',
                 f'{self.config.sampling.T_sampling} sampling steps.',
                 f'Task: {self.args.deg}.',
                 f'Noise level: {self.args.sigma_y}.'
                 )
         else:
-            print('Run IDPG.',
+            print(
                 f'Operators implementation via {self.args.operator_imp}.',
                 f'{self.config.sampling.T_sampling} sampling steps.',
                 f'Task: {self.args.deg}.',
                 f'Noise level: {self.args.sigma_y}.'
                 )
-        self.ddpg_wrapper(model, cls_fn, logger)
+        self.pirp_wrapper(model, cls_fn, logger)
         
-    def ddpg_wrapper(self, model, cls_fn, logger):
+    def pirp_wrapper(self, model, cls_fn, logger):
         args, config = self.args, self.config
 
         dataset, test_dataset = get_dataset(args, config)
@@ -444,7 +444,7 @@ class Diffusion(object):
             # x = coef1 * x + coef2 * noise
 
             with torch.no_grad():           
-                x, _ = ddpg_diffusion(x, model, self.betas, A_funcs, y, sigma_y, cls_fn=cls_fn, classes=classes, config=config, args=args)
+                x, _ = pirp_diffusion(x, model, self.betas, A_funcs, y, sigma_y, cls_fn=cls_fn, classes=classes, config=config, args=args)
 
             # Calculate metrics
             lpips_final = torch.squeeze(loss_fn_alex(x[0], x_orig.to('cpu'))).detach().numpy()
